@@ -3,7 +3,7 @@
       "type": "azure-arm",
   
       "managed_image_resource_group_name": "mb_Kubernetes_Packer_Images",
-      "managed_image_name": "Kubernetes_Ubuntu_v2",
+      "managed_image_name": "Kubernetes_Ubuntu_v3",
   
       "os_type": "Linux",
       "image_publisher": "Canonical",
