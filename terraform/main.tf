@@ -29,7 +29,7 @@ resource "azurerm_resource_group" "kubernetesgroup" {
     name     = "${var.kubernetesgroup}"
     location = "${var.location}"
 
-    tags {
+    tags = {
         environment = "${var.tag}"
     }
 }
@@ -81,7 +81,7 @@ resource "azurerm_public_ip" "kubernetespublicip" {
     resource_group_name          = "${azurerm_resource_group.kubernetesgroup.name}"
     allocation_method            = "Dynamic"
 
-    tags {
+    tags = {
         environment = "${var.tag}"
     }
 }
@@ -135,7 +135,7 @@ resource "azurerm_network_interface" "kubernetesnic" {
         public_ip_address_id          = "${azurerm_public_ip.kubernetespublicip.id}"
     }
 
-    tags {
+    tags = {
         environment = "${var.tag}"
     }
 }
