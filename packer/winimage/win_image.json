@@ -2,7 +2,7 @@
     "builders": [{
       "type": "azure-arm",
   
-      "managed_image_resource_group_name": "Kubernetes_Packer_Images",
+      "managed_image_resource_group_name": "mb_Kubernetes_Packer_Images",
       "managed_image_name": "Kubernetes_Windows_v2",
   
       "os_type": "Windows",
