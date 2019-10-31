@@ -1,0 +1,49 @@
+{
+    "builders": [{
+      "type": "azure-arm",
+  
+      "managed_image_resource_group_name": "Kubernetes_Packer_Images",
+      "managed_image_name": "Kubernetes_Windows_v2",
+  
+      "os_type": "Windows",
+      "image_publisher": "MicrosoftWindowsServer",
+      "image_offer": "WindowsServerSemiAnnual",
+      "image_sku": "Datacenter-Core-1809-with-Containers-smalldisk",
+  
+      "communicator": "winrm",
+      "winrm_use_ssl": true,
+      "winrm_insecure": true,
+      "winrm_timeout": "3m",
+      "winrm_username": "packer",
+  
+      "azure_tags": {
+          "id": "Worker"
+      },
+  
+      "location": "northeurope",
+      "vm_size": "Standard_DS1_v2"
+    }],
+    "provisioners": [
+
+        {
+            "type": "powershell",
+            "inline": [
+                "iwr -outf win-2019-setup.ps1 https://https://raw.githubusercontent.com/mbookham7/k8s-win/master/setup/win-2019-setup.ps1",
+                "./win-2019-setup.ps1"
+            ]
+          },
+         {
+           "type": "windows-restart",
+           "restart_command": "powershell \"& {(Get-WmiObject win32_operatingsystem).LastBootUpTime > C:\\ProgramData\\lastboot.txt; Restart-Computer -force}\"",
+           "restart_check_command": "powershell -command \"& {if ((get-content C:\\ProgramData\\lastboot.txt) -eq (Get-WmiObject win32_operatingsystem).LastBootUpTime) {Write-Output 'Sleeping for 600 seconds to wait for reboot'; start-sleep 600} else {Write-Output 'Reboot complete'}}\""
+         },
+         {
+             "type": "powershell",
+             "inline": [
+                "& $env:SystemRoot\\System32\\Sysprep\\Sysprep.exe /oobe /generalize /quiet /quit",
+                "while($true) { $imageState = Get-ItemProperty HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Setup\\State | Select ImageState; if($imageState.ImageState -ne 'IMAGE_STATE_GENERALIZE_RESEAL_TO_OOBE') { Write-Output $imageState.ImageState; Start-Sleep -s 10  } else { break } }"
+              ]
+           }
+       ]
+       }
+ 
