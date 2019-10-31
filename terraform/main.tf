@@ -116,7 +116,7 @@ resource "azurerm_network_security_group" "kubernetesnsg" {
         destination_address_prefix = "*"
     }
 
-    tags {
+    tags = {
         environment = "${var.tag}"
     }
 }
