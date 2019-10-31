@@ -62,7 +62,7 @@ resource "azurerm_virtual_network" "kubernetesnetwork" {
     location            = "${var.location}"
     resource_group_name = "${azurerm_resource_group.kubernetesgroup.name}"
 
-    tags {
+    tags = {
         environment = "${var.tag}"
     }
 }
