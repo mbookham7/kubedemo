@@ -28,7 +28,7 @@
         {
             "type": "powershell",
             "inline": [
-                "iwr -outf win-2019-setup.ps1 https://https://raw.githubusercontent.com/mbookham7/k8s-win/master/setup/win-2019-setup.ps1",
+                "iwr -outf win-2019-setup.ps1 https://raw.githubusercontent.com/mbookham7/k8s-win/master/setup/win-2019-setup.ps1",
                 "./win-2019-setup.ps1"
             ]
           },
