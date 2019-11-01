@@ -214,15 +214,15 @@ resource "azurerm_storage_container" "blobstorage" {
 #}
 
 # upload to blob storage
-resource "azurerm_storage_blob" "blobobject2" {
-  depends_on             = ["azurerm_storage_container.blobstorage"]
-  name                   = "omsagent.yaml"
-  resource_group_name    = "${azurerm_resource_group.kubernetesgroup.name}"
-  storage_account_name   = "${azurerm_storage_account.storageaccount.name}"
-  storage_container_name = "${azurerm_storage_container.blobstorage.name}"
-  type                   = "block"
-  source                 = "omsagent.yaml"
-}
+#resource "azurerm_storage_blob" "blobobject2" {
+#  depends_on             = ["azurerm_storage_container.blobstorage"]
+#  name                   = "omsagent.yaml"
+#  resource_group_name    = "${azurerm_resource_group.kubernetesgroup.name}"
+#  storage_account_name   = "${azurerm_storage_account.storageaccount.name}"
+#  storage_container_name = "${azurerm_storage_container.blobstorage.name}"
+#  type                   = "block"
+#  source                 = "omsagent.yaml"
+#}
 
 # run a bootstrap script on the VM
 resource "azurerm_virtual_machine_extension" "kubernetesext" {
