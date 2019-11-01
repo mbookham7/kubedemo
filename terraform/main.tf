@@ -175,6 +175,16 @@ resource "azurerm_virtual_machine" "kubernetesvm" {
         environment = "${var.tag}"
     }
 }
+
+# create a storage account
+resource "azurerm_storage_account" "storageaccount" {
+  name                     = "kubestorageaccountdemo"
+  resource_group_name      = "${azurerm_resource_group.kubernetesgroup.name}"
+  location                 = "${azurerm_resource_group.kubernetesgroup.location}"
+  account_tier             = "Standard"
+  account_replication_type = "GRS"
+}
+
 # create a share for persistant storage
 resource "azurerm_storage_share" "testshare" {
   name = "kubefiles"
