@@ -237,7 +237,7 @@ resource "azurerm_virtual_machine_extension" "kubernetesext" {
   settings = <<SETTINGS
     {
         "fileUris": ["https://raw.githubusercontent.com/mbookham7/k8s-win/master/setup/ub-1804-master.sh"],
-        "commandToExecute": "ub-1804-master.sh"
+        "commandToExecute": "./ub-1804-master.sh"
     }
 SETTINGS
 
