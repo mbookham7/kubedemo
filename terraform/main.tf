@@ -171,7 +171,7 @@ resource "azurerm_virtual_machine" "kubernetesvm" {
         }
     }
 
-    tags {
+    tags = {
         environment = "${var.tag}"
     }
 }
