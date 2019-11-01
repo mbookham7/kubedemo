@@ -175,3 +175,63 @@ resource "azurerm_virtual_machine" "kubernetesvm" {
         environment = "${var.tag}"
     }
 }
+# create a share for persistant storage
+resource "azurerm_storage_share" "testshare" {
+  name = "kubefiles"
+
+  resource_group_name  = "${azurerm_resource_group.kubernetesgroup.name}"
+  storage_account_name = "${azurerm_storage_account.storageaccount.name}"
+
+  quota = 5
+}
+
+# create a blob storage account
+resource "azurerm_storage_container" "blobstorage" {
+  name                  = "kubestoragecontainerdemo"
+  resource_group_name   = "${azurerm_resource_group.kubernetesgroup.name}"
+  storage_account_name  = "${azurerm_storage_account.storageaccount.name}"
+  container_access_type = "blob"
+}
+# upload to blob storage
+#resource "azurerm_storage_blob" "blobobject" {
+#  depends_on             = ["azurerm_storage_container.blobstorage"]
+#  name                   = "kube_master_bootstrap.sh"
+#  resource_group_name    = "${azurerm_resource_group.kubernetesgroup.name}"
+#  storage_account_name   = "${azurerm_storage_account.storageaccount.name}"
+#  storage_container_name = "${azurerm_storage_container.blobstorage.name}"
+#  type                   = "block"
+#  source                 = "kube_master_bootstrap.sh"
+#}
+
+# upload to blob storage
+resource "azurerm_storage_blob" "blobobject2" {
+  depends_on             = ["azurerm_storage_container.blobstorage"]
+  name                   = "omsagent.yaml"
+  resource_group_name    = "${azurerm_resource_group.kubernetesgroup.name}"
+  storage_account_name   = "${azurerm_storage_account.storageaccount.name}"
+  storage_container_name = "${azurerm_storage_container.blobstorage.name}"
+  type                   = "block"
+  source                 = "omsagent.yaml"
+}
+
+# run a bootstrap script on the VM
+resource "azurerm_virtual_machine_extension" "kubernetesext" {
+  name                 = "kubemaster"
+  location             = "${azurerm_resource_group.kubernetesgroup.location}"
+  resource_group_name  = "${azurerm_resource_group.kubernetesgroup.name}"
+  virtual_machine_name = "${azurerm_virtual_machine.kubernetesvm.name}"
+  publisher            = "Microsoft.Azure.Extensions"
+  type                 = "CustomScript"
+  type_handler_version = "2.0"
+
+  settings = <<SETTINGS
+    {
+        "fileUris": ["https://raw.githubusercontent.com/mbookham7/k8s-win/master/setup/ub-1804-master.sh"],
+        "commandToExecute": "ub-1804-master.sh"
+    }
+SETTINGS
+
+  tags = {
+    environment = "${var.tag}"
+  }
+}
