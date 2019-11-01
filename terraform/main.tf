@@ -139,3 +139,39 @@ resource "azurerm_network_interface" "kubernetesnic" {
         environment = "${var.tag}"
     }
 }
+# create a VM
+resource "azurerm_virtual_machine" "kubernetesvm" {
+    name                  = "KubernetesVM"
+    location              = "${var.location}"
+    resource_group_name   = "${azurerm_resource_group.kubernetesgroup.name}"
+    network_interface_ids = ["${azurerm_network_interface.kubernetesnic.id}"]
+    vm_size               = "Standard_B2s"
+
+    storage_os_disk {
+        name              = "KubernetesOsDisk"
+        caching           = "ReadWrite"
+        create_option     = "FromImage"
+        managed_disk_type = "Premium_LRS"
+    }
+
+    storage_image_reference {
+        id = "${data.azurerm_image.kubernetesimage.id}"
+    }
+
+    os_profile {
+        computer_name  = "kubemaster"
+        admin_username = "kubeuser"
+    }
+
+    os_profile_linux_config {
+        disable_password_authentication = true
+        ssh_keys {
+            path     = "/home/kubeuser/.ssh/authorized_keys"
+            key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAsoz68oEV52euWKC4LjJXGglQCxE1syUBlEBwmhqZ8KRBeKF2Wu3beX/knhAJP0H0oglI8+FuB4fISPyw6SeMc2vsHQjmEUGJ+UMxVb4vIICj99l5YZU/2Fh2ReoNgVB2cU9Ld7+BawRVRN2bpLEbWq8NDv8i5JYSEGzOiaSD5ydcC3pgAIlhFyV9w+t6q0RzydfPp/AGmdxF0XjHdd5yKPTtNfagSrJry7VZBj+qV6yrJmnxmrGJ7z2RQB0zwORMafl3MZtqQ5nZ5NpShJf0yS+fFct6EN/cETDPcnqr8pVgDWl/OnUxbL6viuvZyZGWJh+rs7DD5RaHtRk+SrMgww== rsa-key-20190423"
+        }
+    }
+
+    tags {
+        environment = "${var.tag}"
+    }
+}
